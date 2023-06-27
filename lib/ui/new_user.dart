@@ -30,50 +30,51 @@ class _NewUserState extends State<NewUser> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left),
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: const Text('Nuevo usuario'),
       ),
-      body: Column(
-        children: [
-          TextFormField(
-            controller: txtName,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+      body: Container(
+        margin: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: txtName,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Ingrese nombre',
               ),
-              hintText: 'Ingrese nombre',
             ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          TextFormField(
-            controller: txtEmail,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+            const SizedBox(
+              height: 30,
+            ),
+            TextFormField(
+              controller: txtEmail,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Ingrese correo',
               ),
-              hintText: 'Ingrese correo',
             ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          ElevatedButton(
-              onPressed: (){
-                database.insertUser(UsersCompanion(
-                  name: dr.Value(txtName.text),
-                  email: dr.Value(txtEmail.text)
-                )).then((value) => {
-                  Navigator.pop(context, true)
-                });
-              },
-              child: const Text('Guardar usuario')
-          )
-        ],
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  database
+                      .insertUser(UsersCompanion(
+                          name: dr.Value(txtName.text),
+                          email: dr.Value(txtEmail.text)))
+                      .then((value) => {Navigator.pop(context, true)});
+                },
+                child: const Text('Guardar usuario'))
+          ],
+        ),
       ),
     );
   }
