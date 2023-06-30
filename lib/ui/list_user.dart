@@ -3,7 +3,7 @@ import 'package:users_app_sem14/database/database.dart';
 import 'package:provider/provider.dart';
 import 'package:users_app_sem14/ui/new_user.dart';
 import 'package:drift/drift.dart' as dr;
-
+import 'edit_user_dialog.dart';
 
 class listUser extends StatefulWidget {
   const listUser({Key? key}) : super(key: key);
@@ -14,14 +14,23 @@ class listUser extends StatefulWidget {
 
 class _listUserState extends State<listUser> {
   late AppDatabase database;
+  late Future<List<User>> userListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    database = Provider.of<AppDatabase>(context, listen: false);
+    userListFuture = database.getListUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
     database = Provider.of<AppDatabase>(context);
+    UserEditDialog dialogEditUser = UserEditDialog();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de usuarios'),
+        title: const Text('Lista de usuarios'),
       ),
       body: FutureBuilder<List<User>>(
         future: database.getListUsers(),
@@ -38,8 +47,7 @@ class _listUserState extends State<listUser> {
                       database.deleteUser(UsersCompanion(
                           id: dr.Value(userData.id),
                           name: dr.Value(userData.name),
-                          email: dr.Value(userData.email)
-                      ));
+                          email: dr.Value(userData.email)));
                     },
                     background: Container(
                       color: Colors.red,
@@ -52,22 +60,10 @@ class _listUserState extends State<listUser> {
                       title: Text(userData.name),
                       subtitle: Text(userData.email),
                       trailing: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: (){
-
-                        }
-                        //     () async {
-                        //   var res = await Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) => NewUser(
-                        //                 user: userData,
-                        //               )));
-                        //   if (res != null && res == true) {
-                        //     setState(() {});
-                        //   }
-                        // },
-                      ),
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            editUser(dialogEditUser, userData);
+                          }),
                     ),
                   );
                 });
@@ -94,6 +90,17 @@ class _listUserState extends State<listUser> {
   void addUser() async {
     var res = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => NewUser()));
+    if (res != null && res == true) {
+      setState(() {});
+    }
+  }
+
+  void editUser(UserEditDialog dialogEditUser, User userData) async {
+    var res = await showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            dialogEditUser.buildDialog(context, userData, false));
+
     if (res != null && res == true) {
       setState(() {});
     }
